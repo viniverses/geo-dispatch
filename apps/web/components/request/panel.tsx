@@ -4,6 +4,8 @@ import { Separator } from '@workspace/ui/components/separator';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
+import { createRequest } from '@/actions/create-request';
+
 import ServiceRequestForm, { type ServiceRequestFormData } from './form';
 
 export const ServiceRequestPanel = () => {
@@ -12,15 +14,22 @@ export const ServiceRequestPanel = () => {
   const handleFormSubmit = async (data: ServiceRequestFormData) => {
     try {
       setIsSubmitting(true);
-      console.log('Dados do formulário:', data);
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await createRequest({
+        serviceType: data.serviceType,
+        name: data.name,
+        phone: data.phone,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        originAddress: data.originAddress?.trim() || undefined,
+        destinationAddress: data.destinationAddress?.trim() || undefined,
+        observations: data.observations?.trim() || undefined,
+      });
 
       toast.success('Solicitação enviada com sucesso!', {
         position: 'top-right',
       });
-    } catch (error) {
-      console.error('Erro ao enviar solicitação:', error);
+    } catch {
       toast.error('Erro ao enviar solicitação. Tente novamente.');
     } finally {
       setIsSubmitting(false);
