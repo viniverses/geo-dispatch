@@ -4,7 +4,7 @@ import { Battery, Car, Truck } from 'lucide-react';
 import { Marker } from 'react-map-gl/mapbox';
 
 import { ServiceProvider } from '@/contexts/providers-context';
-import { formatDistance } from '@/lib/format-utils';
+import { formatDistance } from '@/utils/geolocation';
 
 interface ProviderMarkerProps {
   provider: ServiceProvider;

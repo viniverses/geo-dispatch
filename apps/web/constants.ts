@@ -1,4 +1,4 @@
-import type { ServiceType } from '@/lib/types';
+import type { ServiceType } from '@/types';
 
 export const QUERY_STALE_TIME = 30_000;
 
@@ -15,4 +15,3 @@ export const SERVICE_TYPE_OPTIONS: Array<{ value: ServiceType; label: string }> 
 ];
 
 export const SERVICE_TYPES: ServiceType[] = ['taxi', 'guincho', 'bateria'];
-

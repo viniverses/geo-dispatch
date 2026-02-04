@@ -2,7 +2,7 @@
 
 import { createContext, ReactNode, useContext, useState } from 'react';
 
-import type { Coordinates } from '@/lib/types';
+import type { Coordinates } from '@/types';
 
 interface DestinationWithAddress extends Coordinates {
   address: string;

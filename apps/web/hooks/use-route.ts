@@ -2,17 +2,11 @@
 
 import { useQuery } from '@tanstack/react-query';
 
-import { QUERY_STALE_TIME } from '@/lib/constants';
-import { getErrorMessage } from '@/lib/error-utils';
-import { areCoordinatesValid } from '@/lib/geolocation';
-import { mapboxApi } from '@/lib/mapbox-api';
-import type { Coordinates } from '@/lib/types';
-
-export interface RouteData {
-  coordinates: [number, number][];
-  distance: number;
-  duration: number;
-}
+import { QUERY_STALE_TIME } from '@/constants';
+import { mapboxService } from '@/services/mapbox';
+import type { Coordinates, Route } from '@/types';
+import { getErrorMessage } from '@/utils/error';
+import { areCoordinatesValid } from '@/utils/geolocation';
 
 interface UseRouteProps {
   origin: Coordinates | null;
@@ -30,12 +24,12 @@ export const useRoute = ({ origin, destination, enabled = true }: UseRouteProps)
     queryKey: ['route', originLat, originLng, destLat, destLng],
     enabled: Boolean(
       enabled &&
-        originLat != null &&
-        originLng != null &&
-        destLat != null &&
-        destLng != null &&
-        areCoordinatesValid(originLat, originLng) &&
-        areCoordinatesValid(destLat, destLng)
+      originLat != null &&
+      originLng != null &&
+      destLat != null &&
+      destLng != null &&
+      areCoordinatesValid(originLat, originLng) &&
+      areCoordinatesValid(destLat, destLng)
     ),
     queryFn: async () => {
       if (originLat == null || originLng == null || destLat == null || destLng == null) {
@@ -46,32 +40,21 @@ export const useRoute = ({ origin, destination, enabled = true }: UseRouteProps)
         throw new Error('Coordenadas inválidas');
       }
 
-      const originCoords = `${originLng},${originLat}`;
-      const destCoords = `${destLng},${destLat}`;
-
-      const { data } = await mapboxApi.get(
-        `/directions/v5/mapbox/driving/${originCoords};${destCoords}`,
-        {
-          params: {
-            geometries: 'geojson',
-            overview: 'full',
-            steps: false,
-          },
-        }
+      const data = await mapboxService.getDirections(
+        { latitude: originLat, longitude: originLng },
+        { latitude: destLat, longitude: destLng }
       );
 
-      if (data.code !== 'Ok' || !data.routes || data.routes.length === 0) {
+      const routeData = data.routes?.[0];
+      if (data.code !== 'Ok' || !routeData) {
         throw new Error('Rota não encontrada');
       }
 
-      const routeData = data.routes[0];
-      const coordinates = routeData.geometry.coordinates as [number, number][];
-
       return {
-        coordinates,
+        coordinates: routeData.geometry.coordinates,
         distance: routeData.distance / 1000,
         duration: routeData.duration / 60,
-      } satisfies RouteData;
+      } satisfies Route;
     },
     staleTime: QUERY_STALE_TIME,
   });

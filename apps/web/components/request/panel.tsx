@@ -4,7 +4,7 @@ import { Separator } from '@workspace/ui/components/separator';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import ServiceRequestForm, { type ServiceRequestFormData } from './request-form';
+import ServiceRequestForm, { type ServiceRequestFormData } from './form';
 
 export const ServiceRequestPanel = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,10 +37,7 @@ export const ServiceRequestPanel = () => {
           </p>
         </div>
         <Separator />
-        <ServiceRequestForm
-          onSubmit={handleFormSubmit}
-          isSubmitting={isSubmitting}
-        />
+        <ServiceRequestForm onSubmit={handleFormSubmit} isSubmitting={isSubmitting} />
       </div>
     </div>
   );

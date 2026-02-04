@@ -18,71 +18,21 @@ import { RadioGroup, RadioGroupItem } from '@workspace/ui/components/radio-group
 import { Textarea } from '@workspace/ui/components/textarea';
 import { useEffect, useRef, useState } from 'react';
 import { Controller, useController, useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { AddressAutocomplete } from '@/components/address-autocomplete';
+import { SERVICE_TYPE_LABELS, SERVICE_TYPE_OPTIONS } from '@/constants';
 import { useDestination } from '@/contexts/destination-context';
 import { useLocation } from '@/contexts/location-context';
 import { useProviders } from '@/contexts/providers-context';
 import type { AddressSuggestion } from '@/hooks/use-address-autocomplete';
 import { useLongPress } from '@/hooks/use-long-press';
 import { useReverseGeocode } from '@/hooks/use-reverse-geocode';
-import { SERVICE_TYPE_LABELS, SERVICE_TYPE_OPTIONS, SERVICE_TYPES } from '@/lib/constants';
-import { formatCoordinates } from '@/lib/format-utils';
-import type { ServiceType } from '@/lib/types';
+import type { ServiceType } from '@/types';
+import { formatCoordinates } from '@/utils/geolocation';
 
-const serviceRequestSchema = z
-  .object({
-    serviceType: z.enum(SERVICE_TYPES as [string, ...string[]], {
-      required_error: 'Selecione um tipo de serviço',
-    }),
-    originAddress: z
-      .string()
-      .max(200, 'Local de origem deve ter no máximo 200 caracteres')
-      .optional()
-      .or(z.literal('')),
-    destinationAddress: z
-      .string()
-      .max(200, 'Local de destino deve ter no máximo 200 caracteres')
-      .optional()
-      .or(z.literal('')),
-    name: z
-      .string()
-      .min(2, 'Nome deve ter pelo menos 2 caracteres')
-      .max(100, 'Nome deve ter no máximo 100 caracteres'),
-    phone: z
-      .string()
-      .min(10, 'Telefone inválido')
-      .regex(/^[\d\s()\-+]+$/, 'Telefone deve conter apenas números e caracteres especiais'),
-    observations: z
-      .string()
-      .max(500, 'Observações devem ter no máximo 500 caracteres')
-      .optional()
-      .or(z.literal('')),
-    latitude: z
-      .number({
-        required_error: 'Localização é obrigatória',
-      })
-      .min(-90, 'Latitude inválida')
-      .max(90, 'Latitude inválida'),
-    longitude: z
-      .number({
-        required_error: 'Localização é obrigatória',
-      })
-      .min(-180, 'Longitude inválida')
-      .max(180, 'Longitude inválida'),
-  })
-  .superRefine((data, ctx) => {
-    if (data.serviceType !== 'bateria' && !data.destinationAddress?.trim()) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Local de destino é obrigatório para Taxi/Guincho',
-        path: ['destinationAddress'],
-      });
-    }
-  });
+import { type ServiceRequestFormData, serviceRequestSchema } from './schema';
 
-export type ServiceRequestFormData = z.infer<typeof serviceRequestSchema>;
+export type { ServiceRequestFormData } from './schema';
 
 interface ServiceRequestFormProps {
   onSubmit: (data: ServiceRequestFormData) => void | Promise<void>;
@@ -98,12 +48,7 @@ const ServiceRequestForm = ({ onSubmit, isSubmitting = false }: ServiceRequestFo
   const { fetchProviders } = useProviders();
   const { setDestination, clearDestination } = useDestination();
 
-  const {
-    handleSubmit,
-    control,
-    setValue,
-    watch,
-  } = useForm<ServiceRequestFormData>({
+  const { handleSubmit, control, setValue, watch } = useForm<ServiceRequestFormData>({
     resolver: zodResolver(serviceRequestSchema),
     defaultValues: {
       serviceType: 'taxi',
@@ -119,8 +64,6 @@ const ServiceRequestForm = ({ onSubmit, isSubmitting = false }: ServiceRequestFo
 
   const watchedServiceType = watch('serviceType');
   const watchedOriginAddress = watch('originAddress');
-
-
 
   const latitudeController = useController({ name: 'latitude', control });
   const longitudeController = useController({ name: 'longitude', control });
@@ -179,24 +122,22 @@ const ServiceRequestForm = ({ onSubmit, isSubmitting = false }: ServiceRequestFo
     }
   };
 
-  const confirmLongPressHandlers = useLongPress(handleConfirmLongPress, 
-    {
-      threshold: 3000,
-      onStart: () => {
-        if (isSubmitting || isConfirming) return;
-        if (!pendingSubmitData) return;
+  const confirmLongPressHandlers = useLongPress(handleConfirmLongPress, {
+    threshold: 3000,
+    onStart: () => {
+      if (isSubmitting || isConfirming) return;
+      if (!pendingSubmitData) return;
 
-        setIsHoldingConfirm(true);
-      },
-      onCancel: () => {
-        setIsHoldingConfirm(false);
-      },
-      onFinish: () => {
-        setConfirmOpen(false);
-        setIsHoldingConfirm(false);
-      },
-    }
-  );
+      setIsHoldingConfirm(true);
+    },
+    onCancel: () => {
+      setIsHoldingConfirm(false);
+    },
+    onFinish: () => {
+      setConfirmOpen(false);
+      setIsHoldingConfirm(false);
+    },
+  });
 
   return (
     <>
@@ -257,7 +198,7 @@ const ServiceRequestForm = ({ onSubmit, isSubmitting = false }: ServiceRequestFo
                   placeholder="Digite o local de origem"
                   value={field.value || ''}
                   onChange={(value) => field.onChange(value)}
-                  onSelect={(suggestion: AddressSuggestion) => {
+                  onSelect={(suggestion) => {
                     field.onChange(suggestion.address);
                     setLocation(suggestion.latitude, suggestion.longitude);
                     setValue('latitude', suggestion.latitude, { shouldValidate: true });
@@ -268,9 +209,13 @@ const ServiceRequestForm = ({ onSubmit, isSubmitting = false }: ServiceRequestFo
                   aria-label="Local de origem"
                 />
                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                {(latitudeController.fieldState.invalid || longitudeController.fieldState.invalid) && (
+                {(latitudeController.fieldState.invalid ||
+                  longitudeController.fieldState.invalid) && (
                   <FieldError
-                    errors={[latitudeController.fieldState.error, longitudeController.fieldState.error]}
+                    errors={[
+                      latitudeController.fieldState.error,
+                      longitudeController.fieldState.error,
+                    ]}
                   />
                 )}
               </Field>
@@ -425,7 +370,9 @@ const ServiceRequestForm = ({ onSubmit, isSubmitting = false }: ServiceRequestFo
               {pendingSubmitData.serviceType !== 'bateria' && (
                 <div className="grid grid-cols-3 gap-3">
                   <div className="text-muted-foreground">Destino</div>
-                  <div className="col-span-2 font-medium">{pendingSubmitData.destinationAddress}</div>
+                  <div className="col-span-2 font-medium">
+                    {pendingSubmitData.destinationAddress}
+                  </div>
                 </div>
               )}
               <div className="grid grid-cols-3 gap-3">

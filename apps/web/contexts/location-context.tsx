@@ -2,7 +2,7 @@
 
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
-import { areCoordinatesValid } from '@/lib/geolocation';
+import { areCoordinatesValid } from '@/utils/geolocation';
 
 interface LocationContextType {
   latitude: number | null;

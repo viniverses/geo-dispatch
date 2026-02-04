@@ -3,22 +3,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from 'react';
 
-import { QUERY_STALE_TIME } from '@/lib/constants';
-import { mockProviders } from '@/lib/mocks/providers';
-import {
-  calculateAndSortProvidersByDistance,
-  filterProvidersByServiceType,
-} from '@/lib/services/providers-service';
-import type { Coordinates, CoordinatesNullable, ServiceType } from '@/lib/types';
+import { QUERY_STALE_TIME } from '@/constants';
+import { providersService } from '@/services/providers';
+import type { CoordinatesNullable, ServiceProvider, ServiceType } from '@/types';
 
-export interface ServiceProvider extends Coordinates {
-  id: string;
-  name: string;
-  serviceType: ServiceType;
-  rating: number;
-  distance?: number;
-  available: boolean;
-}
+export type { ServiceProvider } from '@/types';
 
 interface ProvidersContextType {
   providers: ServiceProvider[];
@@ -45,27 +34,32 @@ export const ProvidersProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const queryKey = useMemo(
-    () => ['providers', params.serviceType, params.coordinates.latitude, params.coordinates.longitude] as const,
+    () =>
+      [
+        'providers',
+        params.serviceType,
+        params.coordinates.latitude,
+        params.coordinates.longitude,
+      ] as const,
     [params.serviceType, params.coordinates.latitude, params.coordinates.longitude]
   );
 
   const providersQuery = useQuery({
     queryKey,
     enabled: Boolean(
-      params.serviceType && params.coordinates.latitude != null && params.coordinates.longitude != null
+      params.serviceType &&
+      params.coordinates.latitude != null &&
+      params.coordinates.longitude != null
     ),
     queryFn: async () => {
       const { serviceType, coordinates } = params;
-      if (!serviceType || !coordinates.latitude || !coordinates.longitude) {
+      if (!serviceType || coordinates.latitude == null || coordinates.longitude == null) {
         return [];
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      const filteredProviders = filterProvidersByServiceType(mockProviders, serviceType);
-      return calculateAndSortProvidersByDistance(filteredProviders, {
-        latitude: coordinates.latitude!,
-        longitude: coordinates.longitude!,
+      return providersService.getProviders(serviceType, {
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
       });
     },
     staleTime: QUERY_STALE_TIME,

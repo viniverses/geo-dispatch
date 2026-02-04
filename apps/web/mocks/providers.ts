@@ -1,4 +1,4 @@
-import type { ServiceProvider } from '@/contexts/providers-context';
+import type { ServiceProvider } from '@/types';
 
 export const mockProviders: ServiceProvider[] = [
   {
@@ -56,4 +56,3 @@ export const mockProviders: ServiceProvider[] = [
     available: true,
   },
 ];
-

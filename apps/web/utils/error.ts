@@ -4,4 +4,3 @@ export const getErrorMessage = (error: unknown): string | null => {
   }
   return null;
 };
-

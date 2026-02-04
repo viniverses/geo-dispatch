@@ -29,10 +29,17 @@ export const isValidCoordinates = (latitude: number, longitude: number): boolean
   return isValidLatitude(latitude) && isValidLongitude(longitude);
 };
 
-export const areCoordinatesValid = (
-  latitude: number | null,
-  longitude: number | null
-): boolean => {
-  return latitude != null && longitude != null && isValidCoordinates(latitude, longitude);
+export const areCoordinatesValid = (latitude: number, longitude: number): boolean => {
+  return isValidCoordinates(latitude, longitude);
 };
 
+export const formatDistance = (distance: number | null | undefined): string => {
+  if (distance == null) {
+    return '';
+  }
+  return `${distance.toFixed(1)} km`;
+};
+
+export const formatCoordinates = (latitude: number, longitude: number): string => {
+  return `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+};

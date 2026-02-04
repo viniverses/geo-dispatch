@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { MAPBOX_BASE_URL } from '@/lib/config/mapbox';
+import { MAPBOX_BASE_URL } from '@/config/mapbox';
 
 export const mapboxApi = axios.create({
   baseURL: MAPBOX_BASE_URL,

@@ -9,7 +9,7 @@ import Map from 'react-map-gl/mapbox';
 import { useDestination } from '@/contexts/destination-context';
 import { useLocation } from '@/contexts/location-context';
 import { type ServiceProvider, useProviders } from '@/contexts/providers-context';
-import { MAPBOX_MAP_STYLE } from '@/lib/config/mapbox';
+import { MAPBOX_MAP_STYLE } from '@/config/mapbox';
 
 import { LocationMarker } from './location-marker';
 import { ProviderMarker } from './provider-marker';

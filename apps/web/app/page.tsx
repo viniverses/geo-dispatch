@@ -6,7 +6,7 @@ import { CurrentLocationButton } from '@/components/current-location-button';
 import { LoadingOverlay } from '@/components/loading-overlay';
 import { MapView } from '@/components/map/map-view';
 import { ProviderDetailsDialog } from '@/components/provider-details-dialog';
-import { ServiceRequestPanel } from '@/components/request/request-panel';
+import { ServiceRequestPanel } from '@/components/request/panel';
 import { useDestination } from '@/contexts/destination-context';
 import { useLocation } from '@/contexts/location-context';
 import type { ServiceProvider } from '@/contexts/providers-context';
@@ -28,7 +28,7 @@ export default function Page() {
 
   const { route } = useRoute({
     origin: latitude && longitude ? { latitude, longitude } : null,
-    destination: destination ? destination: null,
+    destination: destination ? destination : null,
     enabled: !!destination && !!latitude && !!longitude,
   });
 

@@ -13,9 +13,9 @@ import { Separator } from '@workspace/ui/components/separator';
 import { Battery, Car, Truck } from 'lucide-react';
 import { useMemo } from 'react';
 
+import { SERVICE_TYPE_LABELS } from '@/constants';
 import type { ServiceProvider } from '@/contexts/providers-context';
-import { SERVICE_TYPE_LABELS } from '@/lib/constants';
-import { formatDistance } from '@/lib/format-utils';
+import { formatDistance } from '@/utils/geolocation';
 
 const ICONS = {
   taxi: Car,
@@ -34,14 +34,22 @@ function estimatePrice(provider: ServiceProvider) {
     const base = 8;
     const perKm = 3.5;
     const estimate = km == null ? null : Math.max(15, base + km * perKm);
-    return { label: 'Estimativa', value: estimate, details: `Base ${formatBRL(base)} + ${formatBRL(perKm)}/km` };
+    return {
+      label: 'Estimativa',
+      value: estimate,
+      details: `Base ${formatBRL(base)} + ${formatBRL(perKm)}/km`,
+    };
   }
 
   if (provider.serviceType === 'guincho') {
     const base = 120;
     const perKm = 8;
     const estimate = km == null ? null : base + km * perKm;
-    return { label: 'Estimativa', value: estimate, details: `Saida ${formatBRL(base)} + ${formatBRL(perKm)}/km` };
+    return {
+      label: 'Estimativa',
+      value: estimate,
+      details: `Saida ${formatBRL(base)} + ${formatBRL(perKm)}/km`,
+    };
   }
 
   const flat = 180;
@@ -89,7 +97,9 @@ export function ProviderDetailsDialog({
         <div className="grid gap-3 text-sm">
           <div className="grid grid-cols-3 gap-3">
             <div className="text-muted-foreground">Disponibilidade</div>
-            <div className="col-span-2 font-medium">{provider.available ? 'Disponivel' : 'Indisponivel'}</div>
+            <div className="col-span-2 font-medium">
+              {provider.available ? 'Disponivel' : 'Indisponivel'}
+            </div>
           </div>
           <div className="grid grid-cols-3 gap-3">
             <div className="text-muted-foreground">Latitude</div>
@@ -112,7 +122,9 @@ export function ProviderDetailsDialog({
                 {price?.value == null ? 'Sob consulta' : formatBRL(price.value)}
               </div>
             </div>
-            {price?.details && <div className="text-muted-foreground mt-1 text-xs">{price.details}</div>}
+            {price?.details && (
+              <div className="text-muted-foreground mt-1 text-xs">{price.details}</div>
+            )}
           </div>
         </div>
 
