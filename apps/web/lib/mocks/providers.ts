@@ -1,0 +1,59 @@
+import type { ServiceProvider } from '@/contexts/providers-context';
+
+export const mockProviders: ServiceProvider[] = [
+  {
+    id: '1',
+    name: 'Taxi Express',
+    serviceType: 'taxi',
+    latitude: -23.693492,
+    longitude: -46.566696,
+    rating: 4.8,
+    available: true,
+  },
+  {
+    id: '2',
+    name: 'Taxi Rápido',
+    serviceType: 'taxi',
+    latitude: -23.694492,
+    longitude: -46.567696,
+    rating: 4.6,
+    available: true,
+  },
+  {
+    id: '3',
+    name: 'Reboque 24h',
+    serviceType: 'guincho',
+    latitude: -23.692492,
+    longitude: -46.565696,
+    rating: 4.9,
+    available: true,
+  },
+  {
+    id: '4',
+    name: 'Guincho Express',
+    serviceType: 'guincho',
+    latitude: -23.695492,
+    longitude: -46.568696,
+    rating: 4.7,
+    available: true,
+  },
+  {
+    id: '5',
+    name: 'Bateria Móvel',
+    serviceType: 'bateria',
+    latitude: -23.691492,
+    longitude: -46.564696,
+    rating: 4.5,
+    available: true,
+  },
+  {
+    id: '6',
+    name: 'Assistência Bateria',
+    serviceType: 'bateria',
+    latitude: -23.696492,
+    longitude: -46.569696,
+    rating: 4.8,
+    available: true,
+  },
+];
+
