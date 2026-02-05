@@ -1,0 +1,27 @@
+{
+  "name": "@workspace/env",
+  "version": "0.0.1",
+  "type": "module",
+  "private": true,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "scripts": {
+    "lint": "eslint . --max-warnings 0"
+  },
+  "dependencies": {
+    "@t3-oss/env-nextjs": "^0.13.10",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.25",
+    "@workspace/eslint-config": "workspace:*",
+    "@workspace/prettier-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "eslint": "^9.39.1",
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3"
+  }
+}
