@@ -1,3 +1,4 @@
+import { env } from '@workspace/env';
 import { defineConfig } from 'drizzle-kit';
 
 export default defineConfig({
@@ -6,7 +7,7 @@ export default defineConfig({
   dialect: 'postgresql',
   casing: 'snake_case',
   dbCredentials: {
-    url: process.env.DATABASE_URL!,
+    url: env.DATABASE_URL,
   },
   extensionsFilters: ['postgis'],
 });

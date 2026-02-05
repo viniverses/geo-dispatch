@@ -9,13 +9,15 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "push": "drizzle-kit push",
-    "generate": "drizzle-kit generate",
-    "migrate": "drizzle-kit migrate",
-    "studio": "drizzle-kit studio",
-    "seed": "tsx src/seed.ts"
+    "push": "dotenv -e ../../.env -- drizzle-kit push",
+    "generate": "dotenv -e ../../.env -- drizzle-kit generate",
+    "migrate": "dotenv -e ../../.env -- drizzle-kit migrate",
+    "studio": "dotenv -e ../../.env -- drizzle-kit studio",
+    "seed": "dotenv -e ../../.env -- tsx src/seed.ts",
+    "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
+    "@workspace/env": "workspace:*",
     "drizzle-orm": "^0.44.7",
     "pg": "^8.16.3"
   },
@@ -26,7 +28,11 @@
     "@workspace/eslint-config": "workspace:*",
     "@workspace/prettier-config": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
+    "dotenv": "^16.4.7",
+    "dotenv-cli": "^7.4.2",
     "drizzle-kit": "^0.31.6",
+    "eslint": "^9.39.1",
+    "prettier": "^3.7.4",
     "tsx": "^4.19.2",
     "typescript": "^5.9.2"
   }

@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+
 import { db } from './client.ts';
 import { offers, providers, requests, users } from './schema/index.ts';
 
@@ -30,7 +31,7 @@ const STATE_CENTERS: Array<{ lat: number; lng: number; radiusDeg: number }> = [
 
 const CATEGORIES = ['TOWING', 'TAXI', 'LOCKSMITH', 'PLUMBER', 'ELECTRICIAN'] as const;
 
-const PROVIDER_COUNT_PER_STATE = 10_000;
+const PROVIDER_COUNT_PER_STATE = 100;
 
 const generateRandomPoint = (center: { lat: number; lng: number; radiusDeg: number }) => {
   const latOffset = faker.number.float({

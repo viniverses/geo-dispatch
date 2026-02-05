@@ -23,6 +23,7 @@ export const offerStatusEnum = pgEnum('offer_status', [
   'PENDING',
   'ACCEPTED',
   'REJECTED',
+  'TAKEN',
   'EXPIRED',
   'CANCELED',
 ]);
